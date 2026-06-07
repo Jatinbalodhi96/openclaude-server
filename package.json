@@ -1,0 +1,25 @@
+{
+  "name": "openclaude-grpc",
+  "version": "1.0.0",
+  "description": "gRPC hosted service wrapper for OpenClaude",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/server.ts",
+    "client": "tsx src/client.ts",
+    "web:dev": "npm run --prefix web dev",
+    "web:build": "npm run --prefix web build",
+    "web:start": "npm run --prefix web start"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.3",
+    "@grpc/proto-loader": "^0.8.0",
+    "@gitlawb/openclaude": "^0.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0"
+  }
+}

@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+package openclaude;
+
+// Main service for managing OpenClaude agent sessions
+service OpenClaudeService {
+  // Lists historical and active sessions
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+
+  // Deletes an existing session
+  rpc DeleteSession(DeleteSessionRequest) returns (DeleteSessionResponse);
+
+  // Gets messages of an existing session
+  rpc GetSessionMessages(GetSessionMessagesRequest) returns (GetSessionMessagesResponse);
+
+  // Interactive bidirectional session chat: streams prompts/decisions to the agent,
+  // and streams agent tokens/messages/permission requests back to the client.
+  rpc SessionChat(stream SessionChatRequest) returns (stream SessionChatResponse);
+}
+
+message ListSessionsRequest {
+  string dir = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message SessionInfo {
+  string session_id = 1;
+  string summary = 2;
+  int64 last_modified = 3;
+  int64 file_size = 4;
+  string custom_title = 5;
+  string first_prompt = 6;
+  string git_branch = 7;
+  string cwd = 8;
+  string tag = 9;
+  int64 created_at = 10;
+}
+
+message ListSessionsResponse {
+  repeated SessionInfo sessions = 1;
+}
+
+message DeleteSessionRequest {
+  string session_id = 1;
+  string dir = 2;
+}
+
+message DeleteSessionResponse {
+  bool success = 1;
+}
+
+message GetSessionMessagesRequest {
+  string session_id = 1;
+  string dir = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+  bool include_system_messages = 5;
+}
+
+message ChatMessage {
+  string role = 1;         // "user", "assistant", "system"
+  string content_json = 2; // JSON-serialized contents
+  string timestamp = 3;
+  string uuid = 4;
+}
+
+message GetSessionMessagesResponse {
+  repeated ChatMessage messages = 1;
+}
+
+// Bidi request messages sent from client to server
+message SessionChatRequest {
+  oneof payload {
+    StartSession start_session = 1;
+    UserPrompt user_prompt = 2;
+    PermissionResponse permission_response = 3;
+    InterruptSession interrupt = 4;
+  }
+}
+
+message StartSession {
+  string cwd = 1;
+  string model = 2;
+  string permission_mode = 3; // "default", "acceptEdits", "bypassPermissions", "dontAsk"
+  string session_id = 4;      // optional, to resume
+  bool fork = 5;              // optional, fork resumed session
+  bool allow_dangerously_skip_permissions = 6;
+  repeated string disallowed_tools = 7;
+  map<string, string> env = 8;
+}
+
+message UserPrompt {
+  string prompt = 1;
+}
+
+message PermissionResponse {
+  string tool_use_id = 1;
+  string decision = 2; // "allow" or "deny"
+  string message = 3;  // message if denied, or optional updated input json
+}
+
+message InterruptSession {}
+
+// Bidi response messages sent from server to client
+message SessionChatResponse {
+  oneof payload {
+    SessionStarted session_started = 1;
+    AgentMessage agent_message = 2;
+    PermissionRequest permission_request = 3;
+    ChatFinished finished = 4;
+    ErrorPayload error = 5;
+  }
+}
+
+message SessionStarted {
+  string session_id = 1;
+}
+
+message AgentMessage {
+  // A raw SDKMessage stringified as JSON. The client can parse it to display streaming text,
+  // tool calls, hook notifications, or terminal outputs.
+  string sdk_message_json = 1;
+}
+
+message PermissionRequest {
+  string request_id = 1;
+  string tool_name = 2;
+  string tool_use_id = 3;
+  string input_json = 4;
+  string uuid = 5;
+}
+
+message ChatFinished {
+  string summary = 1;
+  bool is_error = 2;
+}
+
+message ErrorPayload {
+  string message = 1;
+}
