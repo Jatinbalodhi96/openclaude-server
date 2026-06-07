@@ -1,5 +1,5 @@
 {
-  "name": "openclaude-grpc",
+  "name": "openclaude-server",
   "version": "1.0.0",
   "description": "gRPC hosted service wrapper for OpenClaude",
   "type": "module",

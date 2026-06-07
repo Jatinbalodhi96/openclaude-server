@@ -1,4 +1,4 @@
-# OpenClaude gRPC Service & Next.js Web UI
+# OpenClaude Server & Next.js Web UI
 
 An open-source wrapper for hosting and interacting with **OpenClaude** (the model-agnostic coding agent framework) as a stateful, remote gRPC service alongside a premium Next.js Web UI chat client.
 
