@@ -2,7 +2,7 @@
 
 > Stateful, remote gRPC daemon and orchestration service wrapper for **OpenClaude** coding agent environments.
 
-`openclaude-server` allows you to host stateful OpenClaude coding agents as a headless network service. By exposing a high-performance gRPC interface, it decouples the coding agent engine from the terminal interface, enabling developers to build custom web clients, IDE extensions (e.g., VS Code or Cursor), CI/CD runners, and remote collaborative workspaces.
+`openclaude-server` is a high-performance gRPC host and orchestration daemon for **OpenClaude** agent environments. While natively engineered to execute complex codebase manipulation tasks, it decouples the agent core into a stateful microservice that can run custom personas, RAG frameworks, and chatbot engines across any LLM provider. By moving agent execution to a headless daemon, developers can build secure integrations—such as IDE plugins, web interfaces, and Slack bots—while maintaining complete control over session state persistence, multi-model routing, and remote tool execution permissions.
 
 A Next.js web client is included in the directory structure (`/web`) strictly as a **reference/test application** to demonstrate Server-Sent Events (SSE) stream proxying, session orchestration, and real-time interactive tool permission cards.
 
